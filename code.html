@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<head>
+<style>
+	@property --progress {
+    syntax: '<percentage>';
+    inherits: true;
+    initial-value: 0%;
+  }
+  
+  @property --opacity {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
+  
+  @keyframes animate-progress {
+    from {
+          --progress: 0%;
+    }
+    to {
+          --progress: 100%;
+    }
+  }
+  
+  :root {
+      --color-bgc: #fff;
+      --color-txt: #000;
+      --mix-blend: screen;
+      @media (prefers-color-scheme: dark) {
+          --color-bgc: #000;
+          --color-txt: #fff;
+          --mix-blend: multiply;
+      }
+  }
+  
+  html {
+    background-color: var(--color-bgc);
+    height: 100%;
+    box-sizing: border-box;
+  }
+  
+  html *, html *::before, html *::after {
+    box-sizing: inherit;
+  }
+  
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+      font-family: 'Poppins', sans-serif;
+  }
+  
+  button {
+      --unit: min(18px, 3vw);
+      background-color: var(--color-txt);
+      display: inline-flex;
+      align-items: stretch;
+      justify-content: stretch;
+      appearance: none;
+      padding: calc(.2 * var(--unit));
+      border-width: 0px;
+      font-size: calc(4 * var(--unit));
+      font-family: inherit;
+      letter-spacing: calc(-0.0625 * var(--unit));
+      border-radius: calc(2 * var(--unit));
+      --opacity: 0;
+      --opacity-percent: calc(var(--opacity) * 100%);
+      --progress-multiplier: 3;
+      --progress-multiplied: calc(var(--progress) * var(--progress-multiplier));
+      --min-percent: calc(0% - var(--progress-multiplied));
+      --max-percent: calc(calc(100% * var(--progress-multiplier)) - var(--progress-multiplied));
+      background-image: repeating-linear-gradient(
+          to right,
+          hsl(0   100% 50% / var(--opacity-percent)) var(--min-percent),
+          hsl(60  100% 50% / var(--opacity-percent)),
+          hsl(120 100% 50% / var(--opacity-percent)),
+          hsl(180 100% 50% / var(--opacity-percent)),
+          hsl(240 100% 50% / var(--opacity-percent)),
+          hsl(300 100% 50% / var(--opacity-percent)),
+          hsl(360 100% 50% / var(--opacity-percent)),
+          hsl(0   100% 50% / var(--opacity-percent)) var(--max-percent)
+      );
+      background-repeat: repeat-x;
+      transform: scale(1);
+      cursor: pointer;
+      animation: animate-progress 1s linear infinite;
+      transition:
+          all 0.25s ease-out,
+          --opacity 0.25s ease-out;
+      &:hover {
+          scale: 1.1;
+          --opacity: 1;
+          &:active {
+              scale: 1;
+              transition:
+                  all 0.25s ease-out,
+                  scale 0.15s ease-out,
+                  --opacity 0.25s ease-out;
+          }
+      }
+      &::before {
+          content: '';
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          --offset: calc(4 * var(--unit));
+          width: calc(100% - var(--offset));
+          height: calc(100% - var(--offset));
+          translate: -50% -50%;
+          background: inherit;
+          --blur-amount: calc(5 * var(--unit) * var(--opacity));
+          filter: blur(var(--blur-amount));
+          border-radius: inherit;
+      }
+  }
+  
+  .button-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-bgc);
+      padding: calc(2 * var(--unit));
+      border-radius: calc(1.8 * var(--unit));
+      color: var(--color-txt);
+      mix-blend-mode: var(--mix-blend);
+      pointer-events: none;
+  }
+
+
+* {
+	border: 0;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+:root {
+	--hue: 1;
+	--bg: hsl(var(--hue),90%,90%);
+	--fg: hsl(var(--hue),10%,10%);
+	--primary: hsl(var(--hue),90%,55%);
+	--trans-dur: 0.3s;
+	font-size: calc(16px + (20 - 16) * (100vw - 320px) / (1280 - 320));
+}
+body {
+	background-color: var(--bg);
+	color: var(--fg);
+	font: 1em/1.5 "DM Sans", sans-serif;
+	height: 100vh;
+	display: grid;
+	place-items: center;
+	transition:
+		background-color var(--trans-dur),
+		color var(--trans-dur);
+}
+
+.clock {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	align-items: center;
+}
+.clock__block {
+	background-color: hsl(var(--hue),10%,90%);
+	border-radius: 0.5rem;
+	box-shadow: 0 1rem 2rem hsla(var(--hue),90%,50%,0.3);
+	font-size: 3em;
+	line-height: 2;
+	margin: 0.75rem;
+	overflow: hidden;
+	text-align: center;
+	width: 16rem;
+	height: 6rem;
+	transition:
+		background-color var(--trans-dur),
+		box-shadow var(--trans-dur);
+}
+.clock__block--small {
+	border-radius: 0.25rem;
+	box-shadow: 0 0.5rem 2rem hsla(var(--hue),90%,50%,0.3);
+	font-size: 1em;
+	line-height: 3;
+	width: 3rem;
+	height: 3rem;
+}
+.clock__colon {
+	display: none;
+	font-size: 2em;
+	opacity: 0.5;
+	position: relative;
+}
+.clock__colon:before,
+.clock__colon:after {
+	background-color: currentColor;
+	border-radius: 50%;
+	content: "";
+	display: block;
+	position: absolute;
+	top: -0.05em;
+	left: -0.05em;
+	width: 0.1em;
+	height: 0.1em;
+	transition: background-color var(--trans-dur);
+}
+.clock__colon:before {
+	transform: translateY(-200%);
+}
+.clock__colon:after {
+	transform: translateY(200%);	
+}
+.clock__digit-group {
+	display: flex;
+	flex-direction: column-reverse;
+}
+.clock__digits {
+	width: 100%;
+	height: 100%;
+}
+.clock__block--bounce {
+	animation: bounce 0.75s; 
+}
+.clock__block--bounce .clock__digit-group {
+	animation: roll 0.75s ease-in-out forwards; 
+	transform: translateY(-50%);
+}
+.clock__block--delay1,
+.clock__block--delay1 .clock__digit-group {
+	animation-delay: 0.1s;
+}
+.clock__block--delay2,
+.clock__block--delay2 .clock__digit-group {
+	animation-delay: 0.2s;
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: hsl(var(--hue),10%,10%);
+		--fg: hsl(var(--hue),10%,90%);
+	}
+	.clock__block {
+		background-color: hsl(var(--hue),90%,40%);
+		box-shadow: 0 1rem 2rem hsla(var(--hue),90%,60%,0.4);
+	}
+	.clock__block--small {
+		box-shadow: 0 0.5rem 2rem hsla(var(--hue),90%,60%,0.4);
+	}
+}
+
+/* Beyond mobile */
+@media (min-width: 768px) {
+	.clock {
+		flex-direction: row;
+	}
+	.clock__colon {
+		display: inherit;
+	}
+}
+
+/* Animations */
+@keyframes bounce {
+	from,
+	to {
+		animation-timing-function: ease-in;
+		transform: translateY(0);
+	}
+	50% {
+		animation-timing-function: ease-out;
+		transform: translateY(15%);
+	}
+}
+@keyframes roll {
+	from {
+		transform: translateY(-50%);
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+
+
+</style>
+<script>
+window.addEventListener("DOMContentLoaded",() => {
+	const clock = new BouncyBlockClock(".clock");
+});
+
+class BouncyBlockClock {
+	constructor(qs) {
+		this.el = document.querySelector(qs);
+		this.time = { a: [], b: [] };
+		this.rollClass = "clock__block--bounce";
+		this.digitsTimeout = null;
+		this.rollTimeout = null;
+		this.mod = 0 * 60 * 1000;
+
+		this.loop();
+	}
+	animateDigits() {
+		const groups = this.el.querySelectorAll("[data-time-group]");
+
+		Array.from(groups).forEach((group,i) => {
+			const { a, b } = this.time;
+
+			if (a[i] !== b[i]) group.classList.add(this.rollClass);
+		});
+
+		clearTimeout(this.rollTimeout);
+		this.rollTimeout = setTimeout(this.removeAnimations.bind(this),900);
+	}
+	displayTime() {
+		// screen reader time
+		const timeDigits = [...this.time.b];
+		const ap = timeDigits.pop();
+
+		this.el.ariaLabel = `${timeDigits.join(":")} ${ap}`;
+
+		// displayed time
+		Object.keys(this.time).forEach(letter => {
+			const letterEls = this.el.querySelectorAll(`[data-time="${letter}"]`);
+
+			Array.from(letterEls).forEach((el,i) => {
+				el.textContent = this.time[letter][i];
+			});
+		});
+	}
+	loop() {
+		this.updateTime();
+		this.displayTime();
+		this.animateDigits();
+		this.tick();
+	}
+	removeAnimations() {
+		const groups = this.el.querySelectorAll("[data-time-group]");
+	
+		Array.from(groups).forEach(group => {
+			group.classList.remove(this.rollClass);
+		});
+	}
+	tick() {
+		clearTimeout(this.digitsTimeout);
+		this.digitsTimeout = setTimeout(this.loop.bind(this),1e3);	
+	}
+	updateTime() {
+		const rawDate = new Date();
+		const date = new Date(Math.ceil(rawDate.getTime() / 1e3) * 1e3 + this.mod);
+		let h = date.getHours();
+		const m = date.getMinutes();
+		const s = date.getSeconds();
+		const ap = h < 12 ? "AM" : "PM";
+
+		if (h === 0) h = 12;
+		if (h > 12) h -= 12;
+
+		this.time.a = [...this.time.b];
+		this.time.b = [
+			(h < 10 ? `0${h}` : `${h}`),
+			(m < 10 ? `0${m}` : `${m}`),
+			(s < 10 ? `0${s}` : `${s}`),
+			ap
+		];
+
+		if (!this.time.a.length) this.time.a = [...this.time.b];
+	}
+}
+
+
+</script>
+
+</head>
+<body>
+
+	<button>
+		<span class="button-inner">RUSTech clock Demo</span>
+	</button>
+
+<div class="clock" aria-label="00:00:00 AM">
+	<div class="clock__block clock__block--delay2" aria-hidden="true" data-time-group>
+		<div class="clock__digit-group">
+			<div class="clock__digits" data-time="a">00</div>
+			<div class="clock__digits" data-time="b">00</div>
+		</div>
+	</div>
+	<div class="clock__colon"></div>
+	<div class="clock__block clock__block--delay1" aria-hidden="true" data-time-group>
+		<div class="clock__digit-group">
+			<div class="clock__digits" data-time="a">00</div>
+			<div class="clock__digits" data-time="b">00</div>
+		</div>
+	</div>
+	<div class="clock__colon"></div>
+	<div class="clock__block" aria-hidden="true" data-time-group>
+		<div class="clock__digit-group">
+			<div class="clock__digits" data-time="a">00</div>
+			<div class="clock__digits" data-time="b">00</div>
+		</div>
+	</div>
+	<div class="clock__block clock__block--delay2 clock__block--small" aria-hidden="true" data-time-group>
+		<div class="clock__digit-group">
+			<div class="clock__digits" data-time="a">PM</div>
+			<div class="clock__digits" data-time="b">AM</div>
+		</div>
+	</div>
+</div>
+
+
+</body>
+</html>
